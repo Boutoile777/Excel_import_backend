@@ -12,7 +12,7 @@ Voici les points de terminaison clés, regroupés par fonctionnalité :
 POST,/import_excel,"L'API principal du projet. Reçoit un fichier Excel pour le lire, appliquer un mapping basé sur le type de fichier (Tirage, Garantie/Bonification) et insérer les données dans la base de données.",
 
 GET,/history,Récupère la liste des 100 dernières opérations d'importation effectuées sur la plateforme.,
-
+ 
 DELETE,/history,Supprime toutes les entrées de l'historique d'importation.,
 
 DELETE,/history/<int:id>,Supprime une entrée spécifique de l'historique d'importation via son identifiant.,
