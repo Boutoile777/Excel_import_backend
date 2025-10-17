@@ -1,0 +1,76 @@
+=================================
+Documentation sur les API du Backend
+=================================
+
+Ce document fournit une vue d'ensemble des points de terminaison API disponibles dans le backend de l'application d'importation de données d'Excel vers PostgreSQL.
+ Le backend est construit en utilisant le framework **Flask** pour créer des API RESTful.
+Voici les points de terminaison clés, regroupés par fonctionnalité :
+
+1. Points de terminaison Principaux (Importation & Historique)
+
+
+POST,/import_excel,"L'API principal du projet. Reçoit un fichier Excel pour le lire, appliquer un mapping basé sur le type de fichier (Tirage, Garantie/Bonification) et insérer les données dans la base de données.",
+
+GET,/history,Récupère la liste des 100 dernières opérations d'importation effectuées sur la plateforme.,
+
+DELETE,/history,Supprime toutes les entrées de l'historique d'importation.,
+
+DELETE,/history/<int:id>,Supprime une entrée spécifique de l'historique d'importation via son identifiant.,
+
+2. Points de terminaison d'Authentification (Auth)
+
+Les routes suivantes sont regroupées sous le Blueprint /auth (elles sont donc préfixées par /auth).
+
+
+
+POST,/auth/signup,Enregistre un nouvel utilisateur dans la base de données.
+
+POST,/auth/signin,Connecte un utilisateur en vérifiant ses identifiants et en gérant sa session.
+
+POST,/auth/signout,Déconnecte l'utilisateur de sa session Flask-Login.
+
+GET,/auth/me,Récupère les informations du profil de l'utilisateur connecté.
+
+PATCH,/auth/me,"Met à jour les informations de profil de l'utilisateur (nom, prénom, email)."
+
+PATCH,/auth/me/avatar,Met à jour la photo de profil de l'utilisateur (téléchargement de fichier).
+
+POST,/auth/change-password,Permet à l'utilisateur de changer son mot de passe (nécessite l'ancien mot de passe).
+
+POST,/auth/change-password-first-login,Permet à un utilisateur avec un mot de passe temporaire de définir son mot de passe définitif.
+
+POST,/auth/forgot-password,Envoie un email de réinitialisation de mot de passe à l'utilisateur.
+
+POST,/auth/reset-password/<token>,Réinitialise le mot de passe en utilisant le jeton envoyé par email.
+
+
+3. Points de terminaison Administrateur et Utilisateurs
+
+Ces routes requièrent que l'utilisateur soit non seulement connecté, mais ait aussi le rôle Administrateur (@admin_required).
+
+GET,/auth/utilisateurs-standard,Récupère la liste de tous les utilisateurs qui ne sont pas administrateurs.
+
+GET,/auth/test-admin,Route de test pour vérifier que le décorateur @admin_required fonctionne correctement.
+
+PUT,/auth/changer_permission/<int:user_id>,Modifie la permission d'un utilisateur (bloquer/débloquer l'accès : oui ou non).
+
+
+4. Points de terminaison des Projets et Facilités
+
+Ces routes gèrent l'affichage et la suppression des données d'importation dans la base.
+
+
+GET,/auth/projets_financement,"Récupère tous les projets de financement détaillés, avec jointure sur les tables associées (Commune, Filière, PSF, Promoteur, etc.)."
+
+GET,/auth/<string:id_type_projet>,Récupère les projets de financement filtrés par un identifiant de facilité/type de projet spécifique.
+
+DELETE,/auth/types_projets/<id_type_projet>,"Supprime une ""facilité"" ou un type de projet spécifique de la base de données."
+
+
+Récapitulatif des Décorateurs de Sécurité
+
+La sécurité est mise en œuvre via les décorateurs suivants :
+
+@login_required,Authentification,Assure que l'utilisateur est connecté pour accéder à la route.
+
+@admin_required,Autorisation,Assure que l'utilisateur est connecté ET possède les privilèges d'administrateur.
